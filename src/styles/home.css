@@ -1,0 +1,9 @@
+.card-body text {
+    display: flex;
+    font-weight: bold;
+}
+
+#inside-text {
+    font-weight: lighter;
+    margin-left: 8px;
+}

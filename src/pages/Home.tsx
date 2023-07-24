@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     Button,
     Center,
@@ -18,24 +18,31 @@ import {
     Slider,
     SliderTrack,
     SliderFilledTrack,
-    SliderThumb
+    SliderThumb,
+    useDisclosure
 } from '@chakra-ui/react';
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { IoMdCheckmark, IoMdClose } from 'react-icons/io';
 import { FiChevronLeft, FiChevronRight, FiZoomIn } from 'react-icons/fi';
 import ImageIdentifier from "../components/ImageIdentifier";
 import lpr from "../assets/lpr_example.json";
+import '../styles/home.css';
+import {
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+} from '@chakra-ui/react';
 
 export default function Home() {
     const { colorMode, toggleColorMode } = useColorMode();
     const [imageZoom, setImageZoom] = useState(2);
     const [canvasZoom, setCanvasZoom] = useState(70);
-    const zoomPercentage = canvasZoom/100;
-    const vehicleImageWidth = 1000 * zoomPercentage;
-
-    useEffect(() => {
-        console.log(vehicleImageWidth);
-    }, [vehicleImageWidth]);
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const vehicleImageWidth = 1000 * (canvasZoom/100); // based on zoom slider position transform hundred percent in 1000 value
 
     return (
         <Center h="100vh">
@@ -57,7 +64,7 @@ export default function Home() {
                     <Portal>
                         <PopoverContent>
                             <PopoverArrow />
-                            <PopoverHeader>Image Zoom</PopoverHeader>
+                            <PopoverHeader>Vehicle Image Scale</PopoverHeader>
                             <PopoverCloseButton />
                             <PopoverBody>
                                 <Slider
@@ -91,24 +98,41 @@ export default function Home() {
                             <FiChevronRight />
                         </Button>
                     </Stack>
-                    <CardBody width={vehicleImageWidth}>
-                        <Text>Plate: {lpr.plate}</Text>
-                        <Text>Brand: {lpr.carbigdata_vehicle_information.brand}</Text>
-                        <Text>Model: {lpr.carbigdata_vehicle_information.model}</Text>
-                        <Text>Brand Model: {lpr.carbigdata_vehicle_information.brand_model}</Text>
-                        <Text>Model Year: {lpr.carbigdata_vehicle_information.model_year}</Text>
-                        <Text>Color: {lpr.carbigdata_vehicle_information.color}</Text>
-                        <Text>Type: {lpr.carbigdata_vehicle_information.type}</Text>
+                    <CardBody className="card-body" flexDirection='column' width={vehicleImageWidth}>
+                        <text>Plate: <text id="inside-text">{lpr.plate}</text></text>
+                        <text>Brand: <text id="inside-text">{lpr.carbigdata_vehicle_information.brand}</text></text>
+                        <text >Model: <text id="inside-text">{lpr.carbigdata_vehicle_information.model}</text></text>
+                        <text>Brand Model: <text id="inside-text">{lpr.carbigdata_vehicle_information.brand_model}</text></text>
+                        <text>Model Year: <text id="inside-text">{lpr.carbigdata_vehicle_information.model_year}</text></text>
+                        <text>Color:<text id="inside-text">{lpr.carbigdata_vehicle_information.color}</text></text>
+                        <text>Type: <text id="inside-text">{lpr.carbigdata_vehicle_information.type}</text></text>
                     </CardBody>
                 </Card>
                 <Stack paddingTop="20px" w="50%" justifyContent="space-evenly" flexDirection="row" >
-                    <Button bg="green.400" color="white" padding="30px" w="100px">
+                    <Button bg="green.400" color="white" padding="30px" w="100px" onClick={onOpen}>
                         <IoMdCheckmark size="30" />
                     </Button>
-                    <Button bg="red.400" color="white" padding="30px" w="100px" >
+                    <Button bg="red.400" color="white" padding="30px" w="100px" onClick={onOpen} >
                         <IoMdClose size="30" />
                     </Button>
                 </Stack>
+                <Modal isOpen={isOpen} onClose={onClose}>
+                    <ModalOverlay />
+                    <ModalContent>
+                        <ModalHeader>Confirm your choice</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                            <Text>Are you sure of your choice?</Text>
+                        </ModalBody>
+
+                        <ModalFooter>
+                            <Button colorScheme="green" marginRight='5'>Confirm</Button>
+                            <Button colorScheme='red' mr={3} onClick={onClose}>
+                            Cancel
+                            </Button>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
             </Center>
         </Center>
     );
